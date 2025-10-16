@@ -5,7 +5,6 @@ import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 const API_BASE_URL = 'http://localhost:5000';
 
 export default function LoginForm() {
-  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -16,11 +15,11 @@ export default function LoginForm() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Limpiar error al escribir
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -28,29 +27,20 @@ export default function LoginForm() {
 
   const validateForm = () => {
     const newErrors = {};
-    
-    // Validación de campos generales
     if (!formData.email) newErrors.email = 'Email es requerido';
     if (!formData.password) newErrors.password = 'Contraseña es requerida';
-
-    // Validación específica para el registro
     if (!isLogin && !formData.dni) newErrors.dni = 'DNI es requerido';
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  setMessage(""); // Limpiar mensaje anterior
-    
-    if (!validateForm()) {
-      return;
-    }
-
+    setMessage("");
+    if (!validateForm()) return;
     setLoading(true);
     const endpoint = isLogin ? '/api/login' : '/api/register';
-    const payload = isLogin 
+    const payload = isLogin
       ? { email: formData.email, password: formData.password }
       : { email: formData.email, password: formData.password, dni: formData.dni };
     try {
@@ -66,7 +56,6 @@ export default function LoginForm() {
           setIsLogin(true);
           setFormData({ email: '', password: '', dni: '' });
         } else {
-          // Login exitoso, navegar a dashboard
           navigate('/dashboard');
         }
       } else {
@@ -78,8 +67,7 @@ export default function LoginForm() {
       setLoading(false);
     }
   };
-  
-  // Alternar entre Login y Registro
+
   const toggleMode = () => {
     setIsLogin(prev => !prev);
     setFormData({ email: '', password: '', dni: '' });
