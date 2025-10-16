@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Eye, EyeOff, X, CheckCircle, AlertTriangle } from 'lucide-react';
 
-// URL base de tu backend. Asegúrate de que coincida con donde corre tu servidor Express.
 const API_BASE_URL = 'http://localhost:5000'; 
 
 // Componente para mostrar mensajes de estado (éxito o error)
@@ -31,7 +31,8 @@ const MessageModal = ({ message, type, onClose }) => {
   );
 };
 
-export default function App() {
+export default function LoginForm() {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -93,7 +94,7 @@ export default function App() {
       if (response.ok) {
         // Lógica de éxito
         const successMessage = isLogin 
-          ? `¡Bienvenido/a! Login exitoso. Tu token: ${data.token.substring(0, 20)}...`
+          ? '¡Bienvenido/a! Login exitoso.'
           : 'Registro exitoso. ¡Ahora puedes iniciar sesión!';
         
         setMessage({ text: successMessage, type: 'success' });
@@ -103,8 +104,10 @@ export default function App() {
           setIsLogin(true);
           setFormData({ email: '', password: '', dni: '' });
         } else {
-          // Aquí podrías guardar el token en localStorage o en un estado global
-          console.log('Token JWT:', data.token);
+          // Login exitoso, navegar al dashboard
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 1500);
         }
 
       } else {
