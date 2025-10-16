@@ -91,4 +91,14 @@ Una vez revisada, haz clic en "Merge pull request".
 ## 7.
 ## 8..
 
-# 9..
+# 9.. Actualiza el proyecto
+
+Cambia a main y actualiza
+git checkout main
+git pull origin main
+
+# 3. Vuelve a tu rama
+git checkout feature/mi-tarea
+
+# 4. Fusiona los cambios de main en tu rama
+git merge main
