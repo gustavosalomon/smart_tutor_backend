@@ -68,36 +68,22 @@ El objetivo es que cada colaborador trabaje en una **rama** separada para una ca
 
 ### 5. **Visualización y Revisión de Cambios (Pull Request)**
 
-Aquí es donde el equipo visualiza y valida los cambios de cada integrante.
+Hacer cambios y guardarlos en Git
 
-1.  **Crear un Pull Request (PR):**
-    * Ve a GitHub.
-    * Crea un **Pull Request** (Solicitud de Fusión) que vaya de tu rama **origen** (`feature/mi-tarea-unica`) a la rama **destino** (`main`).
+git add .
+git commit -m "Descripción clara de los cambios"
+git push origin nombre-de-tu-rama
 
-2.  **Revisión y Visualización:**
-    * El Administrador (A) y otros colaboradores revisan el PR.
-    * La pestaña **"Files changed"** (Archivos Cambiados) en GitHub muestra **exactamente línea por línea** el código que cambiaste (el *diff*).
-    * Los revisores dejan comentarios y solicitan ajustes si es necesario.
+### 6. Crear un Pull Request (PR) en GitHub
 
-3.  **Fusión (Merge):**
-    * Una vez que el código ha sido aprobado, se **fusiona (Merge)** el Pull Request a la rama `main`.
+Ve al repositorio en GitHub.
 
----
+Haz clic en "Compare & pull request".
 
-## 📝 Resumen: ¿Cómo visualizar los cambios?
+Asegúrate de que la PR va de tu rama → main.
 
-La clave para la visualización y el trabajo separado es **GitHub** actuando como el centro de revisión.
+Escribe un mensaje y desipción del cambio.
 
-| Aspecto a Visualizar | Método Recomendado |
-| :--- | :--- |
-| **Cambios de un usuario específico** | Revisar los **Pull Requests (PRs)** creados por ese usuario. |
-| **Código modificado (línea a línea)** | Pestaña **"Files changed"** dentro del PR en GitHub (muestra el *diff*). |
-| **Historial completo en `main`** | Pestaña **"Commits"** en GitHub para la rama `main`, mostrando quién fusionó (y en qué PR). |
-| **Separación del trabajo** | El uso de **Ramas** (`feature/`, `bugfix/`) asegura que nadie rompa `main` mientras trabaja. |
+Envía la PR y espera revisión del equipo.
 
-### 💡 Después de la Fusión
-
-Después de que tu rama se fusione con éxito en `main`:
-
-* **Limpia:** Elimina tu rama remota y local (si ya no la necesitas).
-* **Sincroniza:** Antes de empezar la siguiente tarea, **siempre** repite el **Paso 2.1** para asegurarte de que tienes los cambios que otros compañeros acaban de fusionar.
+Una vez revisada, haz clic en "Merge pull request".
