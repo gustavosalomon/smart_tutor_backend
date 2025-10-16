@@ -89,4 +89,4 @@ Envía la PR y espera revisión del equipo.
 Una vez revisada, haz clic en "Merge pull request".
 
 ## 7.
-## 8.
+## 8..
