@@ -1,3 +1,12 @@
+// Obtener usuario autenticado
+export const getCurrentUser = async (token) => {
+  const res = await fetch(`${API_URL}/me`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  return res.json();
+};
 const API_URL = "http://localhost:5000/api";
 
 export const registerUser = async (data) => {
