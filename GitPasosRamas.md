@@ -87,3 +87,5 @@ Escribe un mensaje y desipción del cambio.
 Envía la PR y espera revisión del equipo.
 
 Una vez revisada, haz clic en "Merge pull request".
+
+## 7.
