@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+
 const User = mongoose.model('User', userSchema);
 
 // Middleware para verificar JWT
@@ -38,7 +39,6 @@ function authMiddleware(req, res, next) {
     next();
   });
 }
-
 // Obtener datos del usuario autenticado
 app.get('/api/me', authMiddleware, async (req, res) => {
   try {
@@ -47,20 +47,6 @@ app.get('/api/me', authMiddleware, async (req, res) => {
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener usuario' });
-  }
-});
-
-// Endpoint para probar búsqueda de usuario por email
-app.get('/api/test-user/:email', async (req, res) => {
-  const email = req.params.email;
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
-    res.json({ message: 'Usuario encontrado', user });
-  } catch (error) {
-    res.status(500).json({ message: 'Error en la búsqueda' });
   }
 });
 
@@ -79,29 +65,15 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Aquí está el login modificado para normalizar el email
 app.post('/api/login', async (req, res) => {
   try {
-    const email = req.body.email.toLowerCase().trim(); // Normalizamos email
-    const { password } = req.body;
-
+    const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
-
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).json({ message: 'Contraseña incorrecta' });
-
-    const token = jwt.sign(
-      { id: user._id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '2h' }
-    );
-
-    res.json({
-      message: 'Login exitoso',
-      token,
-      user: { id: user._id, email: user.email, role: user.role }
-    });
+    const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '2h' });
+    res.json({ message: 'Login exitoso', token, user: { id: user._id, email: user.email, role: user.role } });
   } catch (error) {
     console.error('Error en login:', error);
     res.status(500).json({ message: 'Error en el login' });
