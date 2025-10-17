@@ -41,12 +41,12 @@ export default function SettingsPage() {
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 focus:ring-2 focus:ring-green-500"
               >
-                <img alt="avatar" src="https://i.pravatar.cc/64" />
+                <img alt="avatar" src="/buho_usuario.png" />
               </button>
               {showUserMenu && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                   <button 
-                    onClick={() => navigate('/profile')}
+                    onClick={() => navigate('/settings')}
                     className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                   >
                     <User size={16} />
@@ -145,17 +145,6 @@ export default function SettingsPage() {
                 <Globe size={20} />
                 Idioma y Región
               </button>
-              <button
-                onClick={() => setActiveTab('suscripcion')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                  activeTab === 'suscripcion' 
-                    ? 'bg-green-50 text-green-700' 
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <CreditCard size={20} />
-                Suscripción
-              </button>
             </nav>
           </div>
 
@@ -168,12 +157,18 @@ export default function SettingsPage() {
                 
                 <div className="flex items-center gap-6 mb-8">
                   <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200">
-                    <img alt="avatar" src="https://i.pravatar.cc/150" className="w-full h-full object-cover" />
+                    <img alt="avatar" src="/buho_usuario.png" className="w-full h-full object-cover" />
                   </div>
                   <div>
-                    <button className="px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-800 transition-colors">
+                    <label htmlFor="fileInput" className="px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-800 transition-colors cursor-pointer inline-block">
                       Cambiar Foto
-                    </button>
+                    </label>
+                    <input 
+                      id="fileInput" 
+                      type="file" 
+                      accept="image/jpeg,image/png,image/gif" 
+                      className="hidden"
+                    />
                     <p className="text-xs text-gray-500 mt-2">JPG, PNG o GIF. Máximo 5MB</p>
                   </div>
                 </div>
@@ -466,61 +461,6 @@ export default function SettingsPage() {
                   <button className="px-6 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-800 transition-colors">
                     Guardar Preferencias
                   </button>
-                </div>
-              </div>
-            )}
-
-            {/* Suscripción */}
-            {activeTab === 'suscripcion' && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">Suscripción y Pagos</h2>
-                
-                <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Plan Premium</h3>
-                      <p className="text-sm text-gray-600">Acceso ilimitado a todos los cursos y tutores</p>
-                    </div>
-                    <span className="px-4 py-2 bg-green-700 text-white rounded-lg font-semibold">Activo</span>
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    <p>Próximo pago: <span className="font-medium">15 de noviembre, 2025</span></p>
-                    <p>Monto: <span className="font-medium">$19.99/mes</span></p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="text-sm font-semibold text-gray-900">Métodos de pago</h3>
-                  <div className="flex items-center justify-between p-4 border border-gray-300 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <CreditCard size={24} className="text-gray-600" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">•••• •••• •••• 4242</p>
-                        <p className="text-xs text-gray-500">Expira 12/26</p>
-                      </div>
-                    </div>
-                    <button className="text-sm text-green-700 font-medium hover:text-green-800">
-                      Editar
-                    </button>
-                  </div>
-
-                  <button className="w-full px-4 py-3 border-2 border-dashed border-gray-300 text-gray-600 rounded-lg font-medium hover:border-green-500 hover:text-green-700 transition-colors">
-                    + Agregar método de pago
-                  </button>
-
-                  <hr className="my-6" />
-
-                  <div className="space-y-3">
-                    <button className="w-full px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
-                      Cambiar plan
-                    </button>
-                    <button className="w-full px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
-                      Ver historial de pagos
-                    </button>
-                    <button className="w-full px-4 py-3 border border-red-300 text-red-600 rounded-lg font-medium hover:bg-red-50 transition-colors">
-                      Cancelar suscripción
-                    </button>
-                  </div>
                 </div>
               </div>
             )}
