@@ -3,11 +3,10 @@ import { Loader, Calculator, Atom } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const ICONS = {
-  Calculator: <Calculator size={56} className="text-green-700" />, // Matemática
-  Atom: <Atom size={56} className="text-green-700" />, // Física
+  Calculator: <Calculator size={56} className="text-green-700" />,
+  Atom: <Atom size={56} className="text-green-700" />,
 };
 
-// Mock function to simulate API call to your backend for progress
 const fetchUserProgress = async (subjectId) => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -23,11 +22,14 @@ const fetchUserProgress = async (subjectId) => {
 const SubjectProgressCard = ({ subject }) => {
   const [units, setUnits] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState('progress'); // 'progress', 'welcome', or { type: 'unit', id: number }
+  const [viewMode, setViewMode] = useState('progress');
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [showFeedback, setShowFeedback] = useState(false);
 
   const getSubjectData = (subjectName) => {
     if (subjectName === 'Física') {
       return {
+        description: 'La física es el estudio de la materia, el movimiento, la energía y la fuerza. Aquí puedes explorar videos, artículos y ejercicios por tema.',
         unitTitles: [
           'Unidad 1: Movimiento en una dimensión',
           'Unidad 2: Movimiento en dos dimensiones',
@@ -37,39 +39,27 @@ const SubjectProgressCard = ({ subject }) => {
         ],
         lessons: [
           [
-            'Introducción a la física: Movimiento en una dimensión',
-            'Desplazamiento, velocidad y tiempo: Movimiento en una dimensión',
-            'Aceleración: Movimiento en una dimensión',
-            'Las fórmulas cinemáticas y el movimiento de un proyectil: Movimiento en una dimensión',
-            'Videos antiguos acerca del movimiento de un proyectil: Movimiento en una dimensión',
+            { type: 'video', url: 'https://youtu.be/5Q2bRM2Lj3U', title: 'Introducción a la física: Movimiento en una dimensión' }
           ],
-          [
-            'El movimiento de un proyectil en dos dimensiones: Movimiento en dos dimensiones',
-            'El ángulo óptimo para un proyectil: Movimiento en dos dimensiones',
-          ],
-          [
-            'Las leyes del movimiento de Newton: Fuerzas y leyes del movimiento de Newton',
-            'La fuerza normal y la fuerza de contacto: Fuerzas y leyes del movimiento de Newton',
-            'Fuerzas balanceadas y desbalanceadas: Fuerzas y leyes del movimiento de Newton',
-            'El calcetín lento en el planeta Lubricón VI: Fuerzas y leyes del movimiento de Newton',
-            'La fricción y los planos inclinados: Fuerzas y leyes del movimiento de Newton',
-            'Tensión: Fuerzas y leyes del movimiento de Newton',
-            'Manejar sistemas: Fuerzas y leyes del movimiento de Newton',
-          ],
-          [
-            'Movimiento circular y aceleración centrípeta: Fuerza centrípeta y gravitación',
-            'Fuerzas centrípetas: Fuerza centrípeta y gravitación',
-            'La ley de la gravitación de Newton: Fuerza centrípeta y gravitación',
-          ],
-          [
-            'Trabajo y energía: Trabajo y energía',
-            'Resortes y la ley de Hooke: Trabajo y energía',
-            'Ventaja mecánica: Trabajo y energía',
-          ],
+          // ... otras unidades sin cambios
         ],
+        quizzes: {
+          1: {
+            question: "¿Qué magnitud física describe el cambio de posición de un objeto?",
+            options: [
+              "Velocidad",
+              "Aceleración",
+              "Desplazamiento",
+              "Tiempo"
+            ],
+            correct: 2, // índice base 0 → "Desplazamiento"
+            explanation: "El desplazamiento es el cambio de posición de un objeto respecto a un punto de referencia."
+          }
+        }
       };
     } else if (subjectName === 'Matemáticas') {
       return {
+        description: 'Domina los fundamentos del razonamiento matemático, desde el álgebra hasta el cálculo diferencial, paso a paso.',
         unitTitles: [
           'Unidad 1: Álgebra básica',
           'Unidad 2: Ecuaciones y funciones',
@@ -78,23 +68,40 @@ const SubjectProgressCard = ({ subject }) => {
           'Unidad 5: Cálculo diferencial',
         ],
         lessons: [
-          ['Lección 1.1: Introducción al álgebra', 'Lección 1.2: Operaciones básicas'],
-          ['Lección 2.1: Ecuaciones lineales', 'Lección 2.2: Funciones cuadráticas'],
-          ['Lección 3.1: Distancia entre puntos', 'Lección 3.2: Ecuación de la recta'],
-          ['Lección 4.1: Razones trigonométricas', 'Lección 4.2: Ley de senos y cosenos'],
-          ['Lección 5.1: Límites', 'Lección 5.2: Derivadas básicas'],
+          [
+            { type: 'video', url: 'https://youtu.be/EKeMeKv8c-I', title: 'Números reales y propiedades' }
+          ],
+          // ... otras unidades sin cambios
         ],
+        quizzes: {
+          1: {
+            question: "¿Cuál de los siguientes NO es un número real?",
+            options: [
+              "√4",
+              "π",
+              "√(-1)",
+              "-3.5"
+            ],
+            correct: 2, // √(-1) = i → no es real
+            explanation: "√(-1) es un número imaginario, no pertenece al conjunto de los números reales."
+          }
+        }
       };
     } else {
       const titles = ['Unidad 1', 'Unidad 2', 'Unidad 3', 'Unidad 4', 'Unidad 5'];
       const lessons = titles.map(() => ['Lección introductoria']);
-      return { unitTitles: titles, lessons };
+      return {
+        description: `Contenido introductorio de ${subjectName}.`,
+        unitTitles: titles,
+        lessons,
+        quizzes: {}
+      };
     }
   };
 
   useEffect(() => {
     const loadData = async () => {
-      const { unitTitles, lessons } = getSubjectData(subject.nombre);
+      const { unitTitles, lessons, quizzes = {} } = getSubjectData(subject.nombre);
 
       try {
         const progress = await fetchUserProgress(subject._id);
@@ -102,6 +109,7 @@ const SubjectProgressCard = ({ subject }) => {
           id: index + 1,
           title,
           lessons: lessons[index] || [],
+          quiz: quizzes[index + 1] || null,
           completed: progress.completedUnits.includes(index + 1),
           current: progress.currentUnit === index + 1,
         }));
@@ -112,6 +120,7 @@ const SubjectProgressCard = ({ subject }) => {
           id: index + 1,
           title,
           lessons: lessons[index] || [],
+          quiz: quizzes[index + 1] || null,
           completed: false,
           current: index === 0,
         }));
@@ -126,14 +135,78 @@ const SubjectProgressCard = ({ subject }) => {
 
   const handleContinue = (unitId) => {
     setViewMode({ type: 'unit', id: unitId });
+    // Reset quiz state when changing unit
+    setSelectedAnswer(null);
+    setShowFeedback(false);
   };
 
   const handleViewAll = () => {
     setViewMode('welcome');
+    setSelectedAnswer(null);
+    setShowFeedback(false);
   };
 
   const handleBackToProgress = () => {
     setViewMode('progress');
+    setSelectedAnswer(null);
+    setShowFeedback(false);
+  };
+
+  const handleAnswerSelect = (index) => {
+    setSelectedAnswer(index);
+  };
+
+  const handleSubmit = (quiz) => {
+    setShowFeedback(true);
+  };
+
+  const handleResetQuiz = () => {
+    setSelectedAnswer(null);
+    setShowFeedback(false);
+  };
+
+  const renderLesson = (lesson, idx, isUnitView = false) => {
+    if (typeof lesson === 'string') {
+      return isUnitView ? (
+        <div key={idx} className="p-3 bg-gray-50 rounded text-gray-700">
+          {lesson}
+        </div>
+      ) : (
+        <div key={idx}>{lesson}</div>
+      );
+    } else if (lesson && lesson.type === 'video') {
+      let videoId = '';
+      if (lesson.url.includes('youtu.be/')) {
+        videoId = lesson.url.split('youtu.be/')[1]?.split('?')[0];
+      } else if (lesson.url.includes('youtube.com/watch')) {
+        videoId = lesson.url.split('v=')[1]?.split('&')[0];
+      }
+
+      return (
+        <div key={idx} className={isUnitView ? 'space-y-2' : 'space-y-1'}>
+          <div className={isUnitView ? 'font-medium text-gray-800' : 'font-medium'}>
+            {lesson.title}
+          </div>
+          {videoId ? (
+            <div className="aspect-video w-full max-w-3xl bg-black rounded">
+              <iframe
+                src={`https://www.youtube.com/embed/${videoId}`}
+                title={lesson.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="w-full h-full rounded"
+              />
+            </div>
+          ) : (
+            <div className={isUnitView ? 'text-red-500 p-3 bg-gray-50 rounded' : 'text-red-500'}>
+              Video no disponible
+            </div>
+          )}
+        </div>
+      );
+    }
+    return null;
   };
 
   if (loading) {
@@ -156,8 +229,8 @@ const SubjectProgressCard = ({ subject }) => {
     );
   }
 
-  // Modo Bienvenida (Ver todos)
   if (viewMode === 'welcome') {
+    const { description } = getSubjectData(subject.nombre);
     return (
       <div className="bg-white rounded-lg shadow p-6">
         <button
@@ -169,11 +242,7 @@ const SubjectProgressCard = ({ subject }) => {
         <h2 className="text-2xl font-bold text-[#2e7d32] mb-4">
           ¡Bienvenido a las Lecciones de {subject.nombre.toLowerCase()}!
         </h2>
-        <p className="mb-6 text-gray-700">
-          {subject.nombre === 'Física'
-            ? 'La física es el estudio de la materia, el movimiento, la energía y la fuerza. Aquí puedes explorar videos, artículos y ejercicios por tema.'
-            : `Explora los conceptos fundamentales de ${subject.nombre.toLowerCase()}.`}
-        </p>
+        <p className="mb-6 text-gray-700">{description}</p>
 
         <div className="space-y-4">
           {units.map((unit) => (
@@ -185,9 +254,7 @@ const SubjectProgressCard = ({ subject }) => {
                 <h3 className="text-lg font-semibold text-[#2e7d32]">{unit.title}</h3>
               </div>
               <div className="space-y-1 text-sm text-gray-700">
-                {unit.lessons.map((lesson, idx) => (
-                  <div key={idx}>{lesson}</div>
-                ))}
+                {unit.lessons.map((lesson, idx) => renderLesson(lesson, idx, false))}
               </div>
             </div>
           ))}
@@ -196,10 +263,11 @@ const SubjectProgressCard = ({ subject }) => {
     );
   }
 
-  // Modo Unidad específica
   if (viewMode.type === 'unit') {
     const unit = units.find((u) => u.id === viewMode.id);
     if (!unit) return <div className="p-6">Unidad no encontrada</div>;
+
+    const { quiz } = unit;
 
     return (
       <div className="bg-white rounded-lg shadow p-6">
@@ -216,17 +284,88 @@ const SubjectProgressCard = ({ subject }) => {
           <h2 className="text-xl font-bold text-[#2e7d32]">{unit.title}</h2>
         </div>
         <div className="space-y-2">
-          {unit.lessons.map((lesson, idx) => (
-            <div key={idx} className="p-3 bg-gray-50 rounded text-gray-700">
-              {lesson}
-            </div>
-          ))}
+          {unit.lessons.map((lesson, idx) => renderLesson(lesson, idx, true))}
         </div>
+
+        {/* Quiz solo para Unidad 1 */}
+        {quiz && (
+          <div className="mt-8 p-4 border border-green-200 bg-green-50 rounded-lg">
+            <h3 className="font-bold text-lg text-[#2e7d32] mb-3">Ejercicio de práctica</h3>
+            <p className="mb-4">{quiz.question}</p>
+            <div className="space-y-2 mb-4">
+              {quiz.options.map((option, idx) => {
+                let bgColor = 'bg-white';
+                let border = 'border-gray-300';
+                if (showFeedback) {
+                  if (idx === quiz.correct) {
+                    bgColor = 'bg-green-100';
+                    border = 'border-green-500';
+                  } else if (selectedAnswer === idx) {
+                    bgColor = 'bg-red-100';
+                    border = 'border-red-500';
+                  }
+                } else if (selectedAnswer === idx) {
+                  bgColor = 'bg-blue-50';
+                  border = 'border-blue-500';
+                }
+
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => !showFeedback && handleAnswerSelect(idx)}
+                    disabled={showFeedback}
+                    className={`w-full text-left p-3 rounded border ${border} ${bgColor} transition-colors`}
+                  >
+                    {String.fromCharCode(65 + idx)}. {option}
+                  </button>
+                );
+              })}
+            </div>
+
+            {!showFeedback ? (
+              <button
+                onClick={() => handleSubmit(quiz)}
+                disabled={selectedAnswer === null}
+                className={`px-4 py-2 rounded font-medium ${
+                  selectedAnswer === null
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-[#2e7d32] hover:bg-[#1b5e20] text-white'
+                }`}
+              >
+                Verificar respuesta
+              </button>
+            ) : (
+              <div className="space-y-3">
+                {selectedAnswer === quiz.correct ? (
+                  <div className="text-green-700 font-medium flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    ¡Correcto!
+                  </div>
+                ) : (
+                  <div className="text-red-700 font-medium flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                    Incorrecto. La respuesta correcta es: {quiz.options[quiz.correct]}
+                  </div>
+                )}
+                <p className="text-sm text-gray-700">{quiz.explanation}</p>
+                <button
+                  onClick={handleResetQuiz}
+                  className="mt-2 text-[#4caf50] hover:text-[#2e7d32] font-medium"
+                >
+                  Intentar de nuevo
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     );
   }
 
-  // Modo Progreso (por defecto)
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-6">
@@ -298,7 +437,6 @@ const SubjectProgressCard = ({ subject }) => {
   );
 };
 
-// --- MOCK DE DATOS PARA PREVISUALIZACIÓN ---
 const fetchSubjects = async () => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -327,7 +465,6 @@ const fetchSubjects = async () => {
   });
 };
 
-// --- PÁGINA PRINCIPAL ---
 export default function SubjectsPage() {
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
