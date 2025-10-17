@@ -5,19 +5,25 @@ import Dashboard from './pages/Dashboard';
 import SubjectsPage from './pages/Subjects';
 import MyProgress from './pages/MyProgress';
 import SettingsPage from './pages/SettingsPage';
+import Footer from './components/Footer'; // footer
 import './App.css';
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LoginForm />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/subjects" element={<SubjectsPage />} />
-        <Route path="/my-progress" element={<MyProgress />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <div className="min-h-screen flex flex-col">
+        <div className="flex-grow">
+          <Routes>
+            <Route path="/" element={<LoginForm />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/subjects" element={<SubjectsPage />} />
+            <Route path="/my-progress" element={<MyProgress />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
+        <Footer /> {/* 👈 Footer agregado aquí */}
+      </div>
     </BrowserRouter>
   );
 }
