@@ -16,7 +16,8 @@ export default function MyProgress() {
     <div className="min-h-screen bg-gray-50">
       <header className="border-b bg-white">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="text-xl font-semibold text-green-700">Smart Tutor</div>
+          {/*<div className="text-xl font-semibold text-green-700">Smart Tutor</div>*/}
+          <img src="/logodash.png" alt="Smart Tutor Logo" className="h-10 w-auto"/>
           <nav className="flex gap-6 text-sm text-gray-700">
             <a className="hover:text-green-700 cursor-pointer" onClick={() => navigate('/dashboard')}>Inicio</a>
             <a className="hover:text-green-700" href="#">Tutores</a>
@@ -39,7 +40,7 @@ export default function MyProgress() {
               {showUserMenu && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                   <button 
-                    onClick={() => navigate('/profile')}
+                    onClick={() => navigate('/settings')}
                     className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                   >
                     <User size={16} />
