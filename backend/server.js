@@ -84,3 +84,22 @@ app.get('/', (req, res) => res.send('API Smart Tutor 🚀'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Servidor corriendo en puerto ${PORT}`));
+
+
+
+
+app.get('/api/test-mongo', async (req, res) => {
+  try {
+    // Intentamos obtener un usuario cualquiera (el primero que exista)
+    const user = await User.findOne();
+
+    if (!user) {
+      return res.status(200).json({ message: '✅ Conexión exitosa, pero no hay usuarios en la base de datos' });
+    }
+
+    res.status(200).json({ message: '✅ Conexión exitosa', sampleUser: user.email });
+  } catch (error) {
+    console.error('❌ Error al conectar con MongoDB:', error);
+    res.status(500).json({ message: '❌ Error al conectar con MongoDB', error: error.message });
+  }
+});
