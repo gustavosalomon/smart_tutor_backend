@@ -4,7 +4,7 @@
   "description": "Backend API for Smart Tutor",
   "main": "server.js",
   "scripts": {
-    "start": "node smart_tutor_backend/backend/server.js",
+    "start": "node server.js",
     "dev": "nodemon server.js"
   },
   "dependencies": {
